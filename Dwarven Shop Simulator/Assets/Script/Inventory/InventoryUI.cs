@@ -3,36 +3,36 @@ using UnityEngine;
 public class InventoryUI : MonoBehaviour
 {
     public Inventory inventory;
-
-    [Header("Assign slots manually")]
     public InventorySlotUI[] slotsUI;
 
-    public int dragFromIndex = -1;
+    private InventorySlot draggedSlot;
 
-    void Start()
-    {
-        // Initialize slots
-        for (int i = 0; i < slotsUI.Length; i++)
-        {
-            slotsUI[i].Initialize(inventory, this, i);
-        }
-
-        inventory.OnInventoryChanged += RefreshUI;
-
-        RefreshUI();
-    }
-
-    public void RefreshUI()
+    private void Start()
     {
         for (int i = 0; i < slotsUI.Length; i++)
         {
-            slotsUI[i].Refresh();
+            slotsUI[i].Initialize(inventory.slots[i], this);
         }
     }
 
-    public void MoveItem(int from, int to)
+    // Called when a drag starts
+    public void SetDraggedSlot(InventorySlot slot)
     {
-        inventory.MoveItem(from, to);
-        dragFromIndex = -1; // prevents reusing old index
+        draggedSlot = slot;
+    }
+
+    public void ClearDraggedSlot()
+    {
+        draggedSlot = null;
+    }
+
+    public void DropOnSlot(InventorySlot targetSlot)
+    {
+        if (draggedSlot == null || targetSlot == null) return;
+
+        int fromIndex = inventory.slots.IndexOf(draggedSlot);
+        int toIndex = inventory.slots.IndexOf(targetSlot);
+
+        inventory.MoveItem(fromIndex, toIndex);
     }
 }

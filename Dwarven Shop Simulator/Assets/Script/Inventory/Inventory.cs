@@ -4,12 +4,9 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     public int size = 20;
-
     public List<InventorySlot> slots = new List<InventorySlot>();
 
-    public System.Action OnInventoryChanged;
-
-    void Awake()
+    private void Awake()
     {
         Initialize();
     }
@@ -17,20 +14,16 @@ public class Inventory : MonoBehaviour
     void Initialize()
     {
         slots.Clear();
-
         for (int i = 0; i < size; i++)
-        {
             slots.Add(new InventorySlot());
-        }
     }
 
     public bool AddItem(ItemData item, int amount)
     {
         if (item == null) return false;
-
         int remaining = amount;
 
-        // Stack first
+        // Try stacking
         if (item.stackable)
         {
             foreach (var slot in slots)
@@ -38,52 +31,37 @@ public class Inventory : MonoBehaviour
                 if (slot.item == item)
                 {
                     int space = item.maxStack - slot.amount;
-
                     if (space > 0)
                     {
                         int add = Mathf.Min(space, remaining);
-
-                        slot.amount += add;
-
+                        slot.Add(add);
                         remaining -= add;
-
-                        if (remaining <= 0)
-                        {
-                            OnInventoryChanged?.Invoke();
-                            return true;
-                        }
+                        if (remaining <= 0) return true;
                     }
                 }
             }
         }
 
-        // Create new slots
+        // Place in empty slots
         foreach (var slot in slots)
         {
             if (slot.IsEmpty)
             {
                 int add = Mathf.Min(item.maxStack, remaining);
-
                 slot.Set(item, add);
-
                 remaining -= add;
-
-                if (remaining <= 0)
-                {
-                    OnInventoryChanged?.Invoke();
-                    return true;
-                }
+                if (remaining <= 0) return true;
             }
         }
 
-        OnInventoryChanged?.Invoke();
+        Debug.Log("Inventory full!");
         return false;
     }
+
     public void MoveItem(int fromIndex, int toIndex)
     {
         if (fromIndex < 0 || toIndex < 0 ||
-            fromIndex >= slots.Count || toIndex >= slots.Count)
-            return;
+            fromIndex >= slots.Count || toIndex >= slots.Count) return;
 
         var from = slots[fromIndex];
         var to = slots[toIndex];
@@ -94,22 +72,19 @@ public class Inventory : MonoBehaviour
         if (to.item == from.item && from.item.stackable)
         {
             int space = from.item.maxStack - to.amount;
-
             int moveAmount = Mathf.Min(space, from.amount);
-
-            to.amount += moveAmount;
-            from.amount -= moveAmount;
-
-            if (from.amount <= 0)
-                from.Clear();
+            to.Add(moveAmount);
+            from.Remove(moveAmount);
         }
         else
         {
             // Swap
             (from.item, to.item) = (to.item, from.item);
             (from.amount, to.amount) = (to.amount, from.amount);
-        }
 
-        OnInventoryChanged?.Invoke();
+            // Notify changes via public method
+            from.NotifyChanged();
+            to.NotifyChanged();
+        }
     }
 }

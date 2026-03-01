@@ -9,29 +9,26 @@ public class InventorySlotUI : MonoBehaviour,
     IEndDragHandler,
     IDropHandler
 {
-    [Header("Gui Interface")]
+    [Header("UI Elements")]
     public Image icon;
     public TMP_Text amountText;
     public Image amountTextBg;
 
-    public int slotIndex;
+    private InventorySlot slot;
+    private InventoryUI inventoryUI;
 
-    private Inventory inventory;
-    private InventoryUI inventoryUI; 
-    public InventorySlot slot;
-
-    public void Initialize(Inventory inventory, InventoryUI ui, int index)
+    public void Initialize(InventorySlot slot, InventoryUI ui)
     {
-        this.inventory = inventory;
+        this.slot = slot;
         this.inventoryUI = ui;
-        this.slotIndex = index;
+
+        slot.OnSlotChanged += Refresh;
+        Refresh();
     }
 
     public void Refresh()
     {
-        var slot = inventory.slots[slotIndex];
-
-        if (slot.item == null)
+        if (slot.IsEmpty)
         {
             icon.enabled = false;
             amountText.text = "";
@@ -45,39 +42,28 @@ public class InventorySlotUI : MonoBehaviour,
             amountTextBg.enabled = true;
         }
     }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
-        var slot = inventory.slots[slotIndex];
+        if (slot.IsEmpty) return;
 
-        if (slot.item == null) return;
-
-        // Update drag index
-        inventoryUI.dragFromIndex = slotIndex;
-
-        // Always update the icon with current slot's item
+        inventoryUI.SetDraggedSlot(slot);
         DragItemUI.Instance.Show(slot.item.icon);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        // position handled automatically in DragItemUI.Update()
+        // DragItemUI follows mouse automatically
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         DragItemUI.Instance.Hide();
-        inventoryUI.dragFromIndex = -1;
+        inventoryUI.ClearDraggedSlot();
     }
 
-    // DROP TARGET
     public void OnDrop(PointerEventData eventData)
     {
-        inventoryUI.MoveItem(inventoryUI.dragFromIndex, slotIndex);
-    }
-
-    private void OnDisable()
-    {
-        if (DragItemUI.Instance != null)
-            DragItemUI.Instance.Hide();
+        inventoryUI.DropOnSlot(slot);
     }
 }
