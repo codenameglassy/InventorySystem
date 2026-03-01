@@ -86,4 +86,35 @@ public class Inventory : MonoBehaviour
             to.NotifyChanged();
         }
     }
+
+    public void MoveItemFromSlot(InventorySlot sourceSlot, int toIndex)
+    {
+        if (sourceSlot == null || sourceSlot.IsEmpty) return;
+        if (toIndex < 0 || toIndex >= slots.Count) return;
+
+        var target = slots[toIndex];
+
+        // Stack if same item
+        if (target.item == sourceSlot.item && sourceSlot.item.stackable)
+        {
+            int space = sourceSlot.item.maxStack - target.amount;
+            int moveAmount = Mathf.Min(space, sourceSlot.amount);
+            target.Add(moveAmount);
+            sourceSlot.Remove(moveAmount);
+        }
+        else if (target.IsEmpty)
+        {
+            target.Set(sourceSlot.item, sourceSlot.amount);
+            sourceSlot.Clear();
+        }
+        else
+        {
+            // Swap
+            var tempItem = target.item;
+            var tempAmount = target.amount;
+
+            target.Set(sourceSlot.item, sourceSlot.amount);
+            sourceSlot.Set(tempItem, tempAmount);
+        }
+    }
 }

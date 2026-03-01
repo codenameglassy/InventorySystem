@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -30,11 +30,21 @@ public class InventoryUI : MonoBehaviour
     {
         if (draggedSlot == null || targetSlot == null) return;
 
-        int fromIndex = inventory.slots.IndexOf(draggedSlot);
         int toIndex = inventory.slots.IndexOf(targetSlot);
+        if (toIndex < 0) return;
 
-        if (fromIndex >= 0 && toIndex >= 0)
+        int fromIndex = inventory.slots.IndexOf(draggedSlot);
+
+        if (fromIndex >= 0)
+        {
+            // Same inventory — normal move
             inventory.MoveItem(fromIndex, toIndex);
+        }
+        else
+        {
+            // Cross-inventory (e.g. store → player)
+            inventory.MoveItemFromSlot(draggedSlot, toIndex);
+        }
 
         ClearDraggedSlot();
     }
