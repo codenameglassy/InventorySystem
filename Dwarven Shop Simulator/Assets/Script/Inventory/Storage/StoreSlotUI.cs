@@ -7,7 +7,26 @@ public class StoreSlotUI : BaseSlotUI
         BaseInitialize(inventorySlot, source);
     }
 
-    // Store items cannot be dragged out
-    public override void OnBeginDrag(PointerEventData eventData) { }
-    public override void OnEndDrag(PointerEventData eventData) { }
+    // Custom drop — moves from player into store slot
+    public override void OnDrop(PointerEventData eventData)
+    {
+        var draggedSlot = dragSource.CurrentDraggedSlot;
+        if (draggedSlot == null || draggedSlot == slot) return;
+
+        if (slot.IsEmpty)
+        {
+            slot.Set(draggedSlot.item, draggedSlot.amount);
+            draggedSlot.Clear();
+        }
+        else
+        {
+            var tempItem = slot.item;
+            var tempAmount = slot.amount;
+            slot.Set(draggedSlot.item, draggedSlot.amount);
+            draggedSlot.Set(tempItem, tempAmount);
+        }
+
+        DragItemUI.Instance.Hide();
+        dragSource.ClearDraggedSlot();
+    }
 }
