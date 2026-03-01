@@ -17,7 +17,10 @@ public class DragItemUI : MonoBehaviour
     private void Update()
     {
         if (icon.enabled)
+        {
+            // Smoothly follow mouse or directly follow
             transform.position = Input.mousePosition;
+        }
     }
 
 
@@ -26,10 +29,14 @@ public class DragItemUI : MonoBehaviour
         icon.sprite = sprite;
         icon.enabled = true;
 
-        canvasGroup.blocksRaycasts = false; // important
+        // Reset position immediately to the current mouse position
+        transform.position = Input.mousePosition;
+
+        canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 1f;
         gameObject.SetActive(true);
     }
+
 
     public void Hide()
     {

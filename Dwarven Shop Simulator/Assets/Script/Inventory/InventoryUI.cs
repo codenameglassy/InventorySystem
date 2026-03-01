@@ -33,5 +33,6 @@ public class InventoryUI : MonoBehaviour
     public void MoveItem(int from, int to)
     {
         inventory.MoveItem(from, to);
+        dragFromIndex = -1; // prevents reusing old index
     }
 }

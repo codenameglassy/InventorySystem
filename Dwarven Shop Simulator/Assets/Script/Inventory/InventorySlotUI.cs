@@ -66,6 +66,7 @@ public class InventorySlotUI : MonoBehaviour,
     public void OnEndDrag(PointerEventData eventData)
     {
         DragItemUI.Instance.Hide();
+        inventoryUI.dragFromIndex = -1;
     }
 
     // DROP TARGET
