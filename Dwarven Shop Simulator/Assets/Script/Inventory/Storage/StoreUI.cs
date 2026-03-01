@@ -1,8 +1,8 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StoreUI : MonoBehaviour
 {
-    public Inventory storeInventory;
+    public StoreInventory storeInventory;
     public InventoryUI playerInventoryUI;
     public StoreSlotUI[] storeSlotsUI;
 

@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d1d5f79dfb57cf41bd596bc56c5e26c, type: 3}
-  m_Name: IronItem
+  m_Name: WoodItem
   m_EditorClassIdentifier: 
-  itemName: Iron Ore
-  icon: {fileID: 21300000, guid: 5f2d7693c258d494183a720c94e50cba, type: 3}
+  itemName: Wood
+  icon: {fileID: 21300000, guid: fae7fff240b2e4369a36accd11c2a189, type: 3}
   itemType: 0
   stackable: 1
   maxStack: 99
+  worldPrefab: {fileID: 4393574703637137267, guid: 6046d1abd3e29864489bc3f4e4a2c16a,
+    type: 3}

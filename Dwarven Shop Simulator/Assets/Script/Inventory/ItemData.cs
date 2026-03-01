@@ -18,4 +18,7 @@ public class ItemData : ScriptableObject
     [Header("Stack Settings")]
     public bool stackable = true;
     public int maxStack = 99;
+
+    [Header("World Settings")]
+    public GameObject worldPrefab;
 }
