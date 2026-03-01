@@ -7,7 +7,6 @@ public class InventorySlot
     public ItemData item;
     public int amount;
 
-    // Event to notify observers
     public event Action OnSlotChanged;
 
     public bool IsEmpty => item == null;
@@ -41,9 +40,5 @@ public class InventorySlot
         NotifyChanged();
     }
 
-    // Public method to safely trigger event
-    public void NotifyChanged()
-    {
-        OnSlotChanged?.Invoke();
-    }
+    public void NotifyChanged() => OnSlotChanged?.Invoke();
 }

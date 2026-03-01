@@ -10,6 +10,11 @@ public class DragItemUI : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
         Hide();
     }
@@ -24,8 +29,7 @@ public class DragItemUI : MonoBehaviour
     {
         icon.sprite = sprite;
         icon.enabled = true;
-        transform.position = Input.mousePosition; // reset position immediately
-
+        transform.position = Input.mousePosition;
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 1f;
         gameObject.SetActive(true);

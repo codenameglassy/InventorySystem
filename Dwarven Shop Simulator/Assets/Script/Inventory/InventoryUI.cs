@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class InventoryUI : MonoBehaviour
+public class InventoryUI : MonoBehaviour, IDragSource
 {
     public Inventory inventory;
     public InventorySlotUI[] slotsUI;
@@ -10,21 +10,13 @@ public class InventoryUI : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < slotsUI.Length; i++)
-        {
+        int count = Mathf.Min(slotsUI.Length, inventory.slots.Count);
+        for (int i = 0; i < count; i++)
             slotsUI[i].Initialize(inventory.slots[i], this);
-        }
     }
 
-    public void SetDraggedSlot(InventorySlot slot)
-    {
-        draggedSlot = slot;
-    }
-
-    public void ClearDraggedSlot()
-    {
-        draggedSlot = null;
-    }
+    public void SetDraggedSlot(InventorySlot slot) => draggedSlot = slot;
+    public void ClearDraggedSlot() => draggedSlot = null;
 
     public void DropOnSlot(InventorySlot targetSlot)
     {
@@ -36,15 +28,9 @@ public class InventoryUI : MonoBehaviour
         int fromIndex = inventory.slots.IndexOf(draggedSlot);
 
         if (fromIndex >= 0)
-        {
-            // Same inventory — normal move
             inventory.MoveItem(fromIndex, toIndex);
-        }
         else
-        {
-            // Cross-inventory (e.g. store → player)
             inventory.MoveItemFromSlot(draggedSlot, toIndex);
-        }
 
         ClearDraggedSlot();
     }
