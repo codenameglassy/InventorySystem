@@ -17,7 +17,8 @@ public class InventorySlotUI : MonoBehaviour,
     public int slotIndex;
 
     private Inventory inventory;
-    private InventoryUI inventoryUI;
+    private InventoryUI inventoryUI; 
+    public InventorySlot slot;
 
     public void Initialize(Inventory inventory, InventoryUI ui, int index)
     {
@@ -44,26 +45,24 @@ public class InventorySlotUI : MonoBehaviour,
             amountTextBg.enabled = true;
         }
     }
-
-    // START DRAG
     public void OnBeginDrag(PointerEventData eventData)
     {
         var slot = inventory.slots[slotIndex];
 
         if (slot.item == null) return;
 
+        // Update drag index
         inventoryUI.dragFromIndex = slotIndex;
 
+        // Always update the icon with current slot's item
         DragItemUI.Instance.Show(slot.item.icon);
     }
 
-    // DRAGGING
     public void OnDrag(PointerEventData eventData)
     {
-         //DragItemUI follows mouse automatically
+        // position handled automatically in DragItemUI.Update()
     }
 
-    // END DRAG
     public void OnEndDrag(PointerEventData eventData)
     {
         DragItemUI.Instance.Hide();
@@ -73,5 +72,11 @@ public class InventorySlotUI : MonoBehaviour,
     public void OnDrop(PointerEventData eventData)
     {
         inventoryUI.MoveItem(inventoryUI.dragFromIndex, slotIndex);
+    }
+
+    private void OnDisable()
+    {
+        if (DragItemUI.Instance != null)
+            DragItemUI.Instance.Hide();
     }
 }

@@ -14,5 +14,11 @@ public class InventoryTester : MonoBehaviour
             inventory.AddItem(ironOre, 1);
         }
 
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            inventory.AddItem(wood, 1);
+        }
+
+
     }
 }

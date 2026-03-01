@@ -26,39 +26,89 @@ public class Inventory : MonoBehaviour
 
     public bool AddItem(ItemData item, int amount)
     {
-        // try stack first
-        foreach (var slot in slots)
+        if (item == null) return false;
+
+        int remaining = amount;
+
+        // Stack first
+        if (item.stackable)
         {
-            if (slot.item == item && item.stackable)
+            foreach (var slot in slots)
             {
-                slot.amount += amount;
-                OnInventoryChanged?.Invoke();
-                return true;
+                if (slot.item == item)
+                {
+                    int space = item.maxStack - slot.amount;
+
+                    if (space > 0)
+                    {
+                        int add = Mathf.Min(space, remaining);
+
+                        slot.amount += add;
+
+                        remaining -= add;
+
+                        if (remaining <= 0)
+                        {
+                            OnInventoryChanged?.Invoke();
+                            return true;
+                        }
+                    }
+                }
             }
         }
 
-        // find empty slot
+        // Create new slots
         foreach (var slot in slots)
         {
             if (slot.IsEmpty)
             {
-                slot.Set(item, amount);
-                OnInventoryChanged?.Invoke();
-                return true;
+                int add = Mathf.Min(item.maxStack, remaining);
+
+                slot.Set(item, add);
+
+                remaining -= add;
+
+                if (remaining <= 0)
+                {
+                    OnInventoryChanged?.Invoke();
+                    return true;
+                }
             }
         }
 
-        Debug.Log("Inventory Full");
+        OnInventoryChanged?.Invoke();
         return false;
     }
-
     public void MoveItem(int fromIndex, int toIndex)
     {
+        if (fromIndex < 0 || toIndex < 0 ||
+            fromIndex >= slots.Count || toIndex >= slots.Count)
+            return;
+
         var from = slots[fromIndex];
         var to = slots[toIndex];
 
-        (from.item, to.item) = (to.item, from.item);
-        (from.amount, to.amount) = (to.amount, from.amount);
+        if (from.IsEmpty) return;
+
+        // Stack if same item
+        if (to.item == from.item && from.item.stackable)
+        {
+            int space = from.item.maxStack - to.amount;
+
+            int moveAmount = Mathf.Min(space, from.amount);
+
+            to.amount += moveAmount;
+            from.amount -= moveAmount;
+
+            if (from.amount <= 0)
+                from.Clear();
+        }
+        else
+        {
+            // Swap
+            (from.item, to.item) = (to.item, from.item);
+            (from.amount, to.amount) = (to.amount, from.amount);
+        }
 
         OnInventoryChanged?.Invoke();
     }
