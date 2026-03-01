@@ -11,14 +11,12 @@ public class StoreSlotUI : MonoBehaviour,
     [SerializeField] private TMP_Text amountText;
     [SerializeField] private Image amountTextBg;
 
-    private InventorySlot storeSlot; // the slot this UI represents
-    private Inventory storeInventory;
+    private InventorySlot storeSlot;
     private InventoryUI playerInventoryUI;
 
-    public void Initialize(InventorySlot slot, Inventory store, InventoryUI playerUI)
+    public void Initialize(InventorySlot slot, InventoryUI playerUI)
     {
         storeSlot = slot;
-        storeInventory = store;
         playerInventoryUI = playerUI;
 
         storeSlot.OnSlotChanged += Refresh;
@@ -42,19 +40,16 @@ public class StoreSlotUI : MonoBehaviour,
         }
     }
 
-    // ---------------- Drag logic ----------------
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (storeSlot.IsEmpty) return;
 
+        // Treat dragged item as coming from store
         playerInventoryUI.SetDraggedSlot(storeSlot);
         DragItemUI.Instance.Show(storeSlot.item.icon);
     }
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        // DragItemUI follows mouse automatically
-    }
+    public void OnDrag(PointerEventData eventData) { }
 
     public void OnEndDrag(PointerEventData eventData)
     {
@@ -62,31 +57,8 @@ public class StoreSlotUI : MonoBehaviour,
         playerInventoryUI.ClearDraggedSlot();
     }
 
-    // ---------------- Drop logic ----------------
     public void OnDrop(PointerEventData eventData)
     {
-        var draggedSlot = playerInventoryUI.CurrentDraggedSlot;
-        if (draggedSlot == null || draggedSlot == storeSlot) return;
-
-        // If dragged from player inventory → store slot
-        if (storeSlot.IsEmpty)
-        {
-            storeSlot.Set(draggedSlot.item, draggedSlot.amount);
-            draggedSlot.Clear();
-
-            DragItemUI.Instance.Hide();
-            playerInventoryUI.ClearDraggedSlot();
-        }
-        else
-        {
-            // Optional: swap items
-            (storeSlot.item, draggedSlot.item) = (draggedSlot.item, storeSlot.item);
-            (storeSlot.amount, draggedSlot.amount) = (draggedSlot.amount, storeSlot.amount);
-
-            storeSlot.NotifyChanged();
-            draggedSlot.NotifyChanged();
-            DragItemUI.Instance.Hide();
-            playerInventoryUI.ClearDraggedSlot();
-        }
+        playerInventoryUI.DropOnSlot(storeSlot);
     }
 }

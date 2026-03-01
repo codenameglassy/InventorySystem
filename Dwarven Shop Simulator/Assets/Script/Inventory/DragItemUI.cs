@@ -4,9 +4,8 @@ using UnityEngine.UI;
 public class DragItemUI : MonoBehaviour
 {
     public static DragItemUI Instance;
-
-    [SerializeField] private Image icon;
-    [SerializeField] private CanvasGroup canvasGroup;
+    public Image icon;
+    public CanvasGroup canvasGroup;
 
     private void Awake()
     {
@@ -24,8 +23,6 @@ public class DragItemUI : MonoBehaviour
     {
         icon.sprite = sprite;
         icon.enabled = true;
-        transform.position = Input.mousePosition; // reset position immediately
-
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 1f;
         gameObject.SetActive(true);

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class InventorySlotUI : MonoBehaviour,
     IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
@@ -13,9 +13,6 @@ public class InventorySlotUI : MonoBehaviour,
 
     private InventorySlot slot;
     private InventoryUI inventoryUI;
-
-    // Public getter for inventoryUI access
-    public InventorySlot Slot => slot;
 
     public void Initialize(InventorySlot slot, InventoryUI ui)
     {
@@ -46,14 +43,12 @@ public class InventorySlotUI : MonoBehaviour,
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (slot.IsEmpty) return;
+
         inventoryUI.SetDraggedSlot(slot);
         DragItemUI.Instance.Show(slot.item.icon);
     }
 
-    public void OnDrag(PointerEventData eventData)
-    {
-        // DragItemUI follows mouse automatically
-    }
+    public void OnDrag(PointerEventData eventData) { }
 
     public void OnEndDrag(PointerEventData eventData)
     {

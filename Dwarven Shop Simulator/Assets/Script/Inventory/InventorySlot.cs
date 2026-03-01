@@ -4,11 +4,18 @@ using UnityEngine;
 [Serializable]
 public class InventorySlot
 {
+    public Inventory Inventory { get; private set; }
     public ItemData item;
     public int amount;
 
-    // Event to notify observers
     public event Action OnSlotChanged;
+
+    public InventorySlot() { } // for default constructor
+
+    public InventorySlot(Inventory parentInventory)
+    {
+        Inventory = parentInventory;
+    }
 
     public bool IsEmpty => item == null;
 
@@ -19,21 +26,6 @@ public class InventorySlot
         NotifyChanged();
     }
 
-    public void Add(int value)
-    {
-        if (item == null) return;
-        amount += value;
-        NotifyChanged();
-    }
-
-    public void Remove(int value)
-    {
-        if (item == null) return;
-        amount -= value;
-        if (amount <= 0) Clear();
-        else NotifyChanged();
-    }
-
     public void Clear()
     {
         item = null;
@@ -41,7 +33,6 @@ public class InventorySlot
         NotifyChanged();
     }
 
-    // Public method to safely trigger event
     public void NotifyChanged()
     {
         OnSlotChanged?.Invoke();
