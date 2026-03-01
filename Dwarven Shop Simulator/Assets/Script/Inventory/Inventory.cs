@@ -23,7 +23,7 @@ public class Inventory : MonoBehaviour
         if (item == null) return false;
         int remaining = amount;
 
-        // Try stacking
+        // Try stacking first
         if (item.stackable)
         {
             foreach (var slot in slots)
@@ -42,7 +42,7 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        // Place in empty slots
+        // Add to empty slots
         foreach (var slot in slots)
         {
             if (slot.IsEmpty)
@@ -60,8 +60,8 @@ public class Inventory : MonoBehaviour
 
     public void MoveItem(int fromIndex, int toIndex)
     {
-        if (fromIndex < 0 || toIndex < 0 ||
-            fromIndex >= slots.Count || toIndex >= slots.Count) return;
+        if (fromIndex < 0 || toIndex < 0 || fromIndex >= slots.Count || toIndex >= slots.Count)
+            return;
 
         var from = slots[fromIndex];
         var to = slots[toIndex];
@@ -78,11 +78,10 @@ public class Inventory : MonoBehaviour
         }
         else
         {
-            // Swap
+            // Swap items
             (from.item, to.item) = (to.item, from.item);
             (from.amount, to.amount) = (to.amount, from.amount);
 
-            // Notify changes via public method
             from.NotifyChanged();
             to.NotifyChanged();
         }

@@ -6,6 +6,7 @@ public class InventoryUI : MonoBehaviour
     public InventorySlotUI[] slotsUI;
 
     private InventorySlot draggedSlot;
+    public InventorySlot CurrentDraggedSlot => draggedSlot;
 
     private void Start()
     {
@@ -15,7 +16,6 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    // Called when a drag starts
     public void SetDraggedSlot(InventorySlot slot)
     {
         draggedSlot = slot;
@@ -33,6 +33,9 @@ public class InventoryUI : MonoBehaviour
         int fromIndex = inventory.slots.IndexOf(draggedSlot);
         int toIndex = inventory.slots.IndexOf(targetSlot);
 
-        inventory.MoveItem(fromIndex, toIndex);
+        if (fromIndex >= 0 && toIndex >= 0)
+            inventory.MoveItem(fromIndex, toIndex);
+
+        ClearDraggedSlot();
     }
 }

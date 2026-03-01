@@ -4,18 +4,18 @@ using UnityEngine.EventSystems;
 using TMPro;
 
 public class InventorySlotUI : MonoBehaviour,
-    IBeginDragHandler,
-    IDragHandler,
-    IEndDragHandler,
-    IDropHandler
+    IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
     [Header("UI Elements")]
-    public Image icon;
-    public TMP_Text amountText;
-    public Image amountTextBg;
+    [SerializeField] private Image icon;
+    [SerializeField] private TMP_Text amountText;
+    [SerializeField] private Image amountTextBg;
 
     private InventorySlot slot;
     private InventoryUI inventoryUI;
+
+    // Public getter for inventoryUI access
+    public InventorySlot Slot => slot;
 
     public void Initialize(InventorySlot slot, InventoryUI ui)
     {
@@ -46,7 +46,6 @@ public class InventorySlotUI : MonoBehaviour,
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (slot.IsEmpty) return;
-
         inventoryUI.SetDraggedSlot(slot);
         DragItemUI.Instance.Show(slot.item.icon);
     }
