@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class DragItemUI : MonoBehaviour
@@ -8,7 +8,6 @@ public class DragItemUI : MonoBehaviour
     [SerializeField] private Image icon;
     [SerializeField] private CanvasGroup canvasGroup;
 
-    // Global drag state accessible by any slot
     public InventorySlot DraggedSlot { get; private set; }
     public IDragSource DragSource { get; private set; }
 
@@ -16,7 +15,7 @@ public class DragItemUI : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        Hide();
+        EndDrag(); // ← was Hide()
     }
 
     private void Update()
@@ -25,28 +24,29 @@ public class DragItemUI : MonoBehaviour
             transform.position = Input.mousePosition;
     }
 
-    public void Show(Sprite sprite, InventorySlot slot, IDragSource source)
+    public void BeginDrag(InventorySlot slot, IDragSource source)
     {
-        icon.sprite = sprite;
+        if (slot == null || slot.IsEmpty) return;
+
+        DraggedSlot = slot;
+        DragSource = source;
+
+        icon.sprite = slot.item.icon;
         icon.enabled = true;
         transform.position = Input.mousePosition;
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 1f;
         gameObject.SetActive(true);
-
-        DraggedSlot = slot;
-        DragSource = source;
     }
 
-    public void Hide()
+    public void EndDrag()
     {
-        icon.sprite = null;
-        icon.enabled = false;
-        canvasGroup.blocksRaycasts = false;
-        canvasGroup.alpha = 0f;
-        gameObject.SetActive(false);
-
         DraggedSlot = null;
         DragSource = null;
+
+        icon.sprite = null;
+        icon.enabled = false;
+        canvasGroup.alpha = 0f;
+        gameObject.SetActive(false);
     }
 }

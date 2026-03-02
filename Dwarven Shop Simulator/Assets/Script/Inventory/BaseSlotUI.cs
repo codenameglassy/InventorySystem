@@ -35,51 +35,50 @@ public abstract class BaseSlotUI : MonoBehaviour,
     {
         if (slot.IsEmpty) return;
         dragSource.SetDraggedSlot(slot);
-
-        // Pass slot + source globally so ANY slot can access it on drop
-        DragItemUI.Instance.Show(slot.item.icon, slot, dragSource);
+        DragItemUI.Instance.BeginDrag(slot, dragSource);
     }
 
     public void OnDrag(PointerEventData eventData) { }
 
     public virtual void OnEndDrag(PointerEventData eventData)
     {
-        DragItemUI.Instance.Hide();
+        DragItemUI.Instance.EndDrag();
         dragSource.ClearDraggedSlot();
     }
 
     public virtual void OnDrop(PointerEventData eventData)
     {
-        var draggedSlot = DragItemUI.Instance.DraggedSlot;
+        HandleDrop(slot);
+    }
+
+    // Shared stack/swap logic — used by all slot types
+    protected void HandleDrop(InventorySlot target)
+    {
+        var dragged = DragItemUI.Instance.DraggedSlot;
         var source = DragItemUI.Instance.DragSource;
 
-        if (draggedSlot == null || draggedSlot == slot) return;
+        if (dragged == null || dragged == target) return;
 
-        // Stack if same item and stackable
-        if (slot.item == draggedSlot.item && slot.item.stackable)
+        if (target.item == dragged.item && target.item != null && target.item.stackable)
         {
-            int space = slot.item.maxStack - slot.amount;
-            int moveAmount = Mathf.Min(space, draggedSlot.amount);
-
+            int space = target.item.maxStack - target.amount;
+            int moveAmount = Mathf.Min(space, dragged.amount);
             if (moveAmount > 0)
             {
-                slot.Add(moveAmount);
-                draggedSlot.Remove(moveAmount);
+                target.Add(moveAmount);
+                dragged.Remove(moveAmount);
             }
         }
         else
         {
-            // Swap
-            var tempItem = slot.item;
-            var tempAmount = slot.amount;
-
-            slot.Set(draggedSlot.item, draggedSlot.amount);
-
-            if (tempItem == null) draggedSlot.Clear();
-            else draggedSlot.Set(tempItem, tempAmount);
+            var tempItem = target.item;
+            var tempAmount = target.amount;
+            target.Set(dragged.item, dragged.amount);
+            if (tempItem == null) dragged.Clear();
+            else dragged.Set(tempItem, tempAmount);
         }
 
-        DragItemUI.Instance.Hide();
+        DragItemUI.Instance.EndDrag();
         source?.ClearDraggedSlot();
     }
 }

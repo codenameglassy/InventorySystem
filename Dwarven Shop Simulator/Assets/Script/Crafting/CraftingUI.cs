@@ -6,7 +6,7 @@ public class CraftingUI : MonoBehaviour, IDragSource
 {
     [Header("References")]
     public CraftingGrid craftingGrid;
-    public CraftingSlotUI[] slotUIs;           // 9 slots in Inspector
+    public CraftingSlotUI[] slotUIs;
     public CraftingRecipeDatabase recipeDatabase;
     public Inventory playerInventory;
 
@@ -28,7 +28,6 @@ public class CraftingUI : MonoBehaviour, IDragSource
 
         craftingGrid.OnGridChanged += CheckRecipe;
         craftButton.onClick.AddListener(OnCraftClicked);
-
         ClearOutput();
     }
 
@@ -54,14 +53,13 @@ public class CraftingUI : MonoBehaviour, IDragSource
         if (currentMatch == null) return;
 
         int remaining = playerInventory.AddItem(currentMatch.outputItem, currentMatch.outputAmount);
-
         if (remaining > 0)
         {
             Debug.Log("Not enough inventory space to craft!");
             return;
         }
 
-        craftingGrid.ConsumeIngredients(currentMatch); // ← pass recipe
+        craftingGrid.ConsumeIngredients(currentMatch);
         ClearOutput();
     }
 
@@ -73,25 +71,6 @@ public class CraftingUI : MonoBehaviour, IDragSource
         currentMatch = null;
     }
 
-    // IDragSource
     public void SetDraggedSlot(InventorySlot slot) => draggedSlot = slot;
     public void ClearDraggedSlot() => draggedSlot = null;
-
-    public void DropOnSlot(InventorySlot targetSlot)
-    {
-        if (draggedSlot == null || targetSlot == null) return;
-
-        SwapSlots(draggedSlot, targetSlot);
-        ClearDraggedSlot();
-    }
-
-    private void SwapSlots(InventorySlot from, InventorySlot to)
-    {
-        var tempItem = to.item;
-        var tempAmount = to.amount;
-        to.Set(from.item, from.amount);
-
-        if (tempItem == null) from.Clear();
-        else from.Set(tempItem, tempAmount);
-    }
 }
