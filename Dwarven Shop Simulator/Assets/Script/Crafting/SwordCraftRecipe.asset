@@ -13,21 +13,21 @@ MonoBehaviour:
   m_Name: SwordCraftRecipe
   m_EditorClassIdentifier: 
   pattern:
-  - item: {fileID: 11400000, guid: 4cba8808f779d41429f7478053da20ac, type: 2}
+  - item: {fileID: 0}
     amount: 2
-  - item: {fileID: 0}
+  - item: {fileID: 11400000, guid: 4cba8808f779d41429f7478053da20ac, type: 2}
     amount: 1
   - item: {fileID: 0}
     amount: 1
   - item: {fileID: 0}
     amount: 1
-  - item: {fileID: 0}
+  - item: {fileID: 11400000, guid: 4cba8808f779d41429f7478053da20ac, type: 2}
     amount: 1
   - item: {fileID: 0}
     amount: 1
   - item: {fileID: 0}
     amount: 1
-  - item: {fileID: 0}
+  - item: {fileID: 11400000, guid: 15eceeb2f48a6524183b3472b849f799, type: 2}
     amount: 1
   - item: {fileID: 0}
     amount: 1

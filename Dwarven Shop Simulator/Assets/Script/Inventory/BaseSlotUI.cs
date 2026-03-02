@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 
 public abstract class BaseSlotUI : MonoBehaviour,
-    IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+    IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
 {
     [Header("UI Elements")]
     [SerializeField] protected Image icon;
@@ -13,6 +13,10 @@ public abstract class BaseSlotUI : MonoBehaviour,
 
     protected InventorySlot slot;
     protected IDragSource dragSource;
+
+    //check double click
+    private float lastClickTime;
+    private const float DoubleClickThreshold = 0.3f;
 
     protected void BaseInitialize(InventorySlot inventorySlot, IDragSource source)
     {
@@ -51,7 +55,39 @@ public abstract class BaseSlotUI : MonoBehaviour,
         HandleDrop(slot);
     }
 
-    // Shared stack/swap logic — used by all slot types
+
+    public virtual void OnPointerClick(PointerEventData eventData)
+    {
+        // Right click — split
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            if (slot.IsEmpty || slot.amount <= 1) return;
+
+            InventorySlot emptySlot = dragSource.FindNextEmptySlot();
+            if (emptySlot == null)
+            {
+                Debug.Log("No empty slot to split into!");
+                return;
+            }
+
+            int splitAmount = slot.amount / 2;
+            emptySlot.Set(slot.item, splitAmount);
+            slot.Remove(splitAmount);
+            return;
+        }
+
+        // Left double click — collect matching items
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            float timeSinceLastClick = Time.time - lastClickTime;
+
+            if (timeSinceLastClick <= DoubleClickThreshold)
+                dragSource.CollectMatchingItems(slot);
+
+            lastClickTime = Time.time;
+        }
+    }
+
     protected void HandleDrop(InventorySlot target)
     {
         var dragged = DragItemUI.Instance.DraggedSlot;
