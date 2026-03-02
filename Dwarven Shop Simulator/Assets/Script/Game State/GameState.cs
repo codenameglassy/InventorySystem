@@ -1,5 +1,6 @@
 public enum GameState
 {
     Normal,
-    Inventory
+    Inventory,
+    Store
 }

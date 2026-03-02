@@ -17,7 +17,6 @@ public class GameStateManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Observer registration
     public void Register(IGameStateObserver observer)
     {
         if (!observers.Contains(observer))
@@ -29,7 +28,6 @@ public class GameStateManager : MonoBehaviour
         observers.Remove(observer);
     }
 
-    // Called by inventory panels when opened/closed
     public void OnInventoryOpened()
     {
         openInventoryCount++;
@@ -41,6 +39,16 @@ public class GameStateManager : MonoBehaviour
         openInventoryCount = Mathf.Max(0, openInventoryCount - 1);
         if (openInventoryCount == 0)
             TransitionTo(GameState.Normal);
+    }
+
+    public void OnStoreOpened()
+    {
+        TransitionTo(GameState.Store);
+    }
+
+    public void OnStoreClosed()
+    {
+        TransitionTo(GameState.Normal);
     }
 
     private void TransitionTo(GameState newState)
