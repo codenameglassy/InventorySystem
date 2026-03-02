@@ -522,6 +522,7 @@ GameObject:
   - component: {fileID: 101636155}
   - component: {fileID: 101636157}
   - component: {fileID: 101636156}
+  - component: {fileID: 101636158}
   m_Layer: 5
   m_Name: OutputImg
   m_TagString: Untagged
@@ -588,6 +589,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 101636154}
   m_CullTransparentMesh: 1
+--- !u!114 &101636158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101636154}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8143263ef093c644965ae31051c158b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outputIcon: {fileID: 101636156}
+  outputAmountText: {fileID: 1194094980}
+  craftButton: {fileID: 1873544511}
 --- !u!1 &103287255
 GameObject:
   m_ObjectHideFlags: 0
@@ -6848,9 +6864,7 @@ MonoBehaviour:
   - {fileID: 285728107}
   recipeDatabase: {fileID: 11400000, guid: c2db4abcb7a59704bbedf613c87a44e8, type: 2}
   playerInventory: {fileID: 813966172}
-  outputIcon: {fileID: 101636156}
-  outputAmountText: {fileID: 1194094980}
-  craftButton: {fileID: 1873544511}
+  outputUI: {fileID: 101636158}
 --- !u!114 &1168656779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7147,7 +7161,7 @@ GameObject:
   - component: {fileID: 1194094981}
   - component: {fileID: 1194094980}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: outputAmtText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10177,7 +10191,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   storeInventory: {fileID: 278716842}
-  playerInventoryUI: {fileID: 1301014780}
   storeSlotsUI:
   - {fileID: 6274552325711931908}
   - {fileID: 475272778}
@@ -10962,7 +10975,7 @@ GameObject:
   - component: {fileID: 1873544512}
   - component: {fileID: 1873544511}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Output Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

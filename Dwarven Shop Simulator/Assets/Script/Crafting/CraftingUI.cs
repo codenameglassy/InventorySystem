@@ -1,22 +1,15 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class CraftingUI : MonoBehaviour, IDragSource
+public class CraftingUI : BaseInventoryUI
 {
     [Header("References")]
     public CraftingGrid craftingGrid;
     public CraftingSlotUI[] slotUIs;
     public CraftingRecipeDatabase recipeDatabase;
     public Inventory playerInventory;
+    public CraftingOutputUI outputUI;
 
-    [Header("Output Display")]
-    public Image outputIcon;
-    public TMP_Text outputAmountText;
-    public Button craftButton;
-
-    private InventorySlot draggedSlot;
-    public InventorySlot CurrentDraggedSlot => draggedSlot;
     private CraftingRecipe currentMatch;
 
     private void Start()
@@ -26,25 +19,16 @@ public class CraftingUI : MonoBehaviour, IDragSource
             slotUIs[i].Initialize(craftingGrid.slots[i], this);
 
         craftingGrid.OnGridChanged += CheckRecipe;
-        craftButton.onClick.AddListener(OnCraftClicked);
-        ClearOutput();
+        outputUI.SetCraftAction(OnCraftClicked);
+        outputUI.ClearOutput();
     }
 
     private void CheckRecipe()
     {
         currentMatch = recipeDatabase.FindMatch(craftingGrid.GetSlots());
 
-        if (currentMatch != null)
-        {
-            outputIcon.enabled = true;
-            outputIcon.sprite = currentMatch.outputItem.icon;
-            outputAmountText.text = currentMatch.outputAmount.ToString();
-            craftButton.interactable = true;
-        }
-        else
-        {
-            ClearOutput();
-        }
+        if (currentMatch != null) outputUI.ShowOutput(currentMatch);
+        else outputUI.ClearOutput();
     }
 
     private void OnCraftClicked()
@@ -59,42 +43,9 @@ public class CraftingUI : MonoBehaviour, IDragSource
         }
 
         craftingGrid.ConsumeIngredients(currentMatch);
-        ClearOutput();
-    }
-
-    private void ClearOutput()
-    {
-        outputIcon.enabled = false;
-        outputAmountText.text = "";
-        craftButton.interactable = false;
+        outputUI.ClearOutput();
         currentMatch = null;
     }
 
-    public void SetDraggedSlot(InventorySlot slot) => draggedSlot = slot;
-    public void ClearDraggedSlot() => draggedSlot = null;
-
-    public InventorySlot FindNextEmptySlot()
-    {
-        foreach (var s in craftingGrid.slots)
-            if (s.IsEmpty) return s;
-        return null;
-    }
-
-    public void CollectMatchingItems(InventorySlot targetSlot)
-    {
-        if (targetSlot == null || targetSlot.IsEmpty) return;
-
-        foreach (var slot in craftingGrid.slots)
-        {
-            if (slot == targetSlot || slot.IsEmpty) continue;
-            if (slot.item != targetSlot.item) continue;
-
-            int space = targetSlot.item.maxStack - targetSlot.amount;
-            if (space <= 0) break;
-
-            int moveAmount = Mathf.Min(space, slot.amount);
-            targetSlot.Add(moveAmount);
-            slot.Remove(moveAmount);
-        }
-    }
+    protected override List<InventorySlot> GetSlots() => craftingGrid.slots;
 }

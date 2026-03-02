@@ -1,14 +1,11 @@
-﻿using UnityEngine.EventSystems;
-
+﻿// StoreSlotUI.cs
+using UnityEngine.EventSystems;
 public class StoreSlotUI : BaseSlotUI
 {
-    public void Initialize(InventorySlot inventorySlot, IDragSource source)
+    public void Initialize(InventorySlot inventorySlot, BaseInventoryUI source)
     {
         BaseInitialize(inventorySlot, source);
     }
 
-    public override void OnDrop(PointerEventData eventData)
-    {
-        HandleDrop(slot);
-    }
+    public override void OnDrop(PointerEventData eventData) => HandleDrop(slot);
 }

@@ -13,15 +13,16 @@ public abstract class BaseSlotUI : MonoBehaviour,
 
     protected InventorySlot slot;
     protected IDragSource dragSource;
+    protected ISlotContainer slotContainer;
 
-    //check double click
     private float lastClickTime;
     private const float DoubleClickThreshold = 0.3f;
 
-    protected void BaseInitialize(InventorySlot inventorySlot, IDragSource source)
+    protected void BaseInitialize(InventorySlot inventorySlot, BaseInventoryUI source)
     {
         slot = inventorySlot;
         dragSource = source;
+        slotContainer = source;     // same object implements both interfaces
         slot.OnSlotChanged += Refresh;
         Refresh();
     }
@@ -55,15 +56,14 @@ public abstract class BaseSlotUI : MonoBehaviour,
         HandleDrop(slot);
     }
 
-
     public virtual void OnPointerClick(PointerEventData eventData)
     {
-        // Right click — split
+        // Right click — split in half
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             if (slot.IsEmpty || slot.amount <= 1) return;
 
-            InventorySlot emptySlot = dragSource.FindNextEmptySlot();
+            InventorySlot emptySlot = slotContainer.FindNextEmptySlot();
             if (emptySlot == null)
             {
                 Debug.Log("No empty slot to split into!");
@@ -79,10 +79,8 @@ public abstract class BaseSlotUI : MonoBehaviour,
         // Left double click — collect matching items
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            float timeSinceLastClick = Time.time - lastClickTime;
-
-            if (timeSinceLastClick <= DoubleClickThreshold)
-                dragSource.CollectMatchingItems(slot);
+            if (Time.time - lastClickTime <= DoubleClickThreshold)
+                slotContainer.CollectMatchingItems(slot);
 
             lastClickTime = Time.time;
         }
