@@ -14,7 +14,7 @@ using UnityEngine.UI;
     using System.Net;
 #endif
 
-public class FirstPersonController : MonoBehaviour
+public class FirstPersonController : MonoBehaviour, IGameStateObserver
 {
     private Rigidbody rb;
 
@@ -196,6 +196,15 @@ public class FirstPersonController : MonoBehaviour
         }
 
         #endregion
+
+        // Add in Start(), after existing code
+        GameStateManager.Instance.Register(this);
+    }
+
+    // Add OnDestroy
+    private void OnDestroy()
+    {
+        GameStateManager.Instance.Unregister(this);
     }
 
     float camRotation;
@@ -439,6 +448,26 @@ public class FirstPersonController : MonoBehaviour
         }
 
         #endregion
+    }
+
+    // Add the observer method
+    public void OnStateChanged(GameState newState)
+    {
+        bool isNormal = newState == GameState.Normal;
+
+        playerCanMove = isNormal;
+        cameraCanMove = isNormal;
+
+        if (isNormal)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
     }
 
     // Sets isGrounded based on a raycast sent straigth down from the player object
