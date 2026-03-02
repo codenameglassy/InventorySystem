@@ -14,9 +14,7 @@ public class InventoryInputHandler : MonoBehaviour
     private void Update()
     {
         foreach (var binding in bindings)
-        {
             if (Input.GetKeyDown(binding.key))
                 binding.panel.Toggle();
-        }
     }
 }

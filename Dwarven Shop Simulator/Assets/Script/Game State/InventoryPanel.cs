@@ -4,9 +4,9 @@ public class InventoryPanel : MonoBehaviour, IOpenable
 {
     public bool IsOpen { get; private set; }
 
-    private void Start()
+    private void Awake()
     {
-        // Ensure panel starts closed after all Awake inits are done
+        // Force closed before anything else runs
         IsOpen = false;
         gameObject.SetActive(false);
     }

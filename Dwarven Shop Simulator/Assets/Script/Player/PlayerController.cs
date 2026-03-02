@@ -28,8 +28,6 @@ public class PlayerController : MonoBehaviour, IGameStateObserver
     private void Start()
     {
         GameStateManager.Instance.Register(this);
-
-        // Lock cursor on start
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -43,13 +41,29 @@ public class PlayerController : MonoBehaviour, IGameStateObserver
     {
         bool isNormal = newState == GameState.Normal;
 
-        playerLook.enabled = isNormal;
         playerMovement.enabled = isNormal;
         playerJump.enabled = isNormal;
         playerCrouch.enabled = isNormal;
         playerHeadBob.enabled = isNormal;
 
-        Cursor.lockState = isNormal ? CursorLockMode.Locked : CursorLockMode.None;
-        Cursor.visible = !isNormal;
+        if (isNormal)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            // Delay re-enabling camera by one frame to discard mouse delta
+            StartCoroutine(EnableLookNextFrame());
+        }
+        else
+        {
+            playerLook.enabled = false;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+    }
+
+    private System.Collections.IEnumerator EnableLookNextFrame()
+    {
+        yield return null; // wait one frame for cursor lock to settle
+        playerLook.enabled = true;
     }
 }
