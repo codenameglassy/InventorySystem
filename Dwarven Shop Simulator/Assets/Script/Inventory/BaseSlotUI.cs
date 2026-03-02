@@ -35,7 +35,9 @@ public abstract class BaseSlotUI : MonoBehaviour,
     {
         if (slot.IsEmpty) return;
         dragSource.SetDraggedSlot(slot);
-        DragItemUI.Instance.Show(slot.item.icon);
+
+        // Pass slot + source globally so ANY slot can access it on drop
+        DragItemUI.Instance.Show(slot.item.icon, slot, dragSource);
     }
 
     public void OnDrag(PointerEventData eventData) { }
@@ -48,6 +50,21 @@ public abstract class BaseSlotUI : MonoBehaviour,
 
     public virtual void OnDrop(PointerEventData eventData)
     {
-        dragSource.DropOnSlot(slot);
+        // Read from global drag state — works across ANY inventory type
+        var draggedSlot = DragItemUI.Instance.DraggedSlot;
+        var source = DragItemUI.Instance.DragSource;
+
+        if (draggedSlot == null || draggedSlot == slot) return;
+
+        var tempItem = slot.item;
+        var tempAmount = slot.amount;
+
+        slot.Set(draggedSlot.item, draggedSlot.amount);
+
+        if (tempItem == null) draggedSlot.Clear();
+        else draggedSlot.Set(tempItem, tempAmount);
+
+        DragItemUI.Instance.Hide();
+        source?.ClearDraggedSlot();
     }
 }

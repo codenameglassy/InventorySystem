@@ -10,12 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d1d5f79dfb57cf41bd596bc56c5e26c, type: 3}
-  m_Name: WoodItem
+  m_Name: SwordItem
   m_EditorClassIdentifier: 
-  itemName: Wood
-  icon: {fileID: 21300000, guid: fae7fff240b2e4369a36accd11c2a189, type: 3}
+  itemName: Sword
+  icon: {fileID: 21300000, guid: ecfb93eff99e246be828873e695d4b72, type: 3}
   itemType: 0
   stackable: 1
   maxStack: 99
-  worldPrefab: {fileID: 4393574703637137267, guid: 9d78c45812f17f849a190def99455353,
-    type: 3}
+  worldPrefab: {fileID: 0}

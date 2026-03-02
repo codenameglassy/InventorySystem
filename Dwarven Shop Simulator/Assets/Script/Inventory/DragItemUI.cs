@@ -8,13 +8,13 @@ public class DragItemUI : MonoBehaviour
     [SerializeField] private Image icon;
     [SerializeField] private CanvasGroup canvasGroup;
 
+    // Global drag state accessible by any slot
+    public InventorySlot DraggedSlot { get; private set; }
+    public IDragSource DragSource { get; private set; }
+
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         Hide();
     }
@@ -25,7 +25,7 @@ public class DragItemUI : MonoBehaviour
             transform.position = Input.mousePosition;
     }
 
-    public void Show(Sprite sprite)
+    public void Show(Sprite sprite, InventorySlot slot, IDragSource source)
     {
         icon.sprite = sprite;
         icon.enabled = true;
@@ -33,6 +33,9 @@ public class DragItemUI : MonoBehaviour
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 1f;
         gameObject.SetActive(true);
+
+        DraggedSlot = slot;
+        DragSource = source;
     }
 
     public void Hide()
@@ -42,5 +45,8 @@ public class DragItemUI : MonoBehaviour
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = 0f;
         gameObject.SetActive(false);
+
+        DraggedSlot = null;
+        DragSource = null;
     }
 }
