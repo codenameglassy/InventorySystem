@@ -6,7 +6,7 @@ public class StoreUI : BaseInventoryUI
     public StoreInventory storeInventory;
     public StoreSlotUI[] storeSlotsUI;
 
-    private void Start()
+    private void Awake() // ← was Start
     {
         int count = Mathf.Min(storeSlotsUI.Length, storeInventory.slots.Count);
         for (int i = 0; i < count; i++)

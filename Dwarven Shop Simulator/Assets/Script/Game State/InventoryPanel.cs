@@ -4,6 +4,13 @@ public class InventoryPanel : MonoBehaviour, IOpenable
 {
     public bool IsOpen { get; private set; }
 
+    private void Start()
+    {
+        // Ensure panel starts closed after all Awake inits are done
+        IsOpen = false;
+        gameObject.SetActive(false);
+    }
+
     public void Open()
     {
         if (IsOpen) return;
@@ -26,7 +33,6 @@ public class InventoryPanel : MonoBehaviour, IOpenable
         else Open();
     }
 
-    // Safety — if destroyed while open, notify manager
     private void OnDestroy()
     {
         if (IsOpen) GameStateManager.Instance.OnInventoryClosed();

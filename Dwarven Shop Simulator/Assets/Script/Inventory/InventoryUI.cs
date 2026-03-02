@@ -6,7 +6,8 @@ public class InventoryUI : BaseInventoryUI
     public Inventory inventory;
     public InventorySlotUI[] slotsUI;
 
-    private void Start()
+    // InventoryUI.cs — change Start to Awake
+    private void Awake()
     {
         int count = Mathf.Min(slotsUI.Length, inventory.slots.Count);
         for (int i = 0; i < count; i++)

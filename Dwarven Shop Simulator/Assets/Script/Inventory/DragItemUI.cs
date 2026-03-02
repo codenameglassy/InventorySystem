@@ -39,14 +39,25 @@ public class DragItemUI : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    public void EndDrag()
+    public void HideVisual()
     {
-        DraggedSlot = null;
-        DragSource = null;
-
         icon.sprite = null;
         icon.enabled = false;
         canvasGroup.alpha = 0f;
         gameObject.SetActive(false);
+    }
+
+    // Clears drag state — called after drop is resolved
+    public void ClearState()
+    {
+        DraggedSlot = null;
+        DragSource = null;
+    }
+
+    // Full cleanup — keeps convenience method for other uses
+    public void EndDrag()
+    {
+        HideVisual();
+        ClearState();
     }
 }

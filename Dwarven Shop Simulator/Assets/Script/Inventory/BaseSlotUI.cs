@@ -47,7 +47,9 @@ public abstract class BaseSlotUI : MonoBehaviour,
 
     public virtual void OnEndDrag(PointerEventData eventData)
     {
-        DragItemUI.Instance.EndDrag();
+        // Only hide the visual — don't clear state yet
+        // OnDrop fires after this and still needs DraggedSlot + DragSource
+        DragItemUI.Instance.HideVisual();
         dragSource.ClearDraggedSlot();
     }
 
@@ -56,6 +58,7 @@ public abstract class BaseSlotUI : MonoBehaviour,
         HandleDrop(slot);
     }
 
+  
     public virtual void OnPointerClick(PointerEventData eventData)
     {
         // Right click — split in half
@@ -112,7 +115,8 @@ public abstract class BaseSlotUI : MonoBehaviour,
             else dragged.Set(tempItem, tempAmount);
         }
 
-        DragItemUI.Instance.EndDrag();
+        // Clear state here after drop is resolved
+        DragItemUI.Instance.ClearState();
         source?.ClearDraggedSlot();
     }
 }

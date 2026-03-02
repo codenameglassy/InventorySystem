@@ -12,7 +12,8 @@ public class CraftingUI : BaseInventoryUI
 
     private CraftingRecipe currentMatch;
 
-    private void Start()
+    // CraftingUI.cs — change Start to Awake
+    private void Awake()
     {
         int count = Mathf.Min(slotUIs.Length, craftingGrid.slots.Count);
         for (int i = 0; i < count; i++)
