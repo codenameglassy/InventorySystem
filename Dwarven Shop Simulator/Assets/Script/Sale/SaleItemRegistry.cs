@@ -37,4 +37,6 @@ public class SaleItemRegistry : MonoBehaviour
     }
 
     public bool HasItems() => itemsForSale.Count > 0;
+
+    public bool Contains(SaleItem item) => itemsForSale.Contains(item);
 }

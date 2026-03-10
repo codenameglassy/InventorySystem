@@ -9,6 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b45dc29abeb4e34fb86f2e2e4b74dd1, type: 3}
-  m_Name: BuyerEntityData
+  m_Script: {fileID: 11500000, guid: 51968ae5aafa60c4b93006c76a71b1d9, type: 3}
+  m_Name: NewBuyerData 1
   m_EditorClassIdentifier: 
+  moveSpeed: 3.5
+  stoppingDistance: 1.5
+  idleWanderRadius: 5
+  inspectDuration: 2
+  budget: 100
+  itemPriorities:
+  - {fileID: 11400000, guid: c4c5514ecc1cd164e86126843fd2fc31, type: 2}
