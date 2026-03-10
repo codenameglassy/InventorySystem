@@ -7,7 +7,7 @@ public abstract class Entity : MonoBehaviour
     //Finite State Machine
     public FiniteStateMachine stateMachine;
     public EntityData entityData;
-    public Animator anim { get; private set; }
+    public Animator anim;
 
     protected abstract void Awake();
     protected abstract void Start();

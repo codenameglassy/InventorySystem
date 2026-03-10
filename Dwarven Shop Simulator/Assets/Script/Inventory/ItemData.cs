@@ -21,4 +21,7 @@ public class ItemData : ScriptableObject
 
     [Header("World Settings")]
     public GameObject worldPrefab;
+
+    [Header("Store Settings")]
+    public int price = 0;
 }

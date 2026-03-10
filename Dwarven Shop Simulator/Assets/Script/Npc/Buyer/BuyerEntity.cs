@@ -7,17 +7,16 @@ public class BuyerEntity : Entity
     //Finiste state machine
     public BuyerIdleState idleState;
 
-
-
     protected override void Awake()
     {
-      
+        anim = GetComponent<Animator>();
     }
 
     protected override void Start()
     {
         stateMachine = new FiniteStateMachine();
         idleState = new BuyerIdleState(this, stateMachine, entityData, "idle");
+        stateMachine.Initialize(idleState);
     }
    
     protected override void Update()

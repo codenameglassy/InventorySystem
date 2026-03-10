@@ -3,10 +3,16 @@ using UnityEngine;
 
 public class WorldSpawner : MonoBehaviour
 {
-    public List<Transform> spawnPoints;         // ← assign one per store slot
+    public List<Transform> spawnPoints;
     public StoreInventory storeInventory;
 
-    private Dictionary<InventorySlot, GameObject> spawnedObjects = new Dictionary<InventorySlot, GameObject>();
+    [Header("Sale Settings")]
+    [SerializeField] private bool isSaleStore = false;
+
+    private Dictionary<InventorySlot, GameObject> spawnedObjects
+        = new Dictionary<InventorySlot, GameObject>();
+    private Dictionary<InventorySlot, SaleItem> saleItems
+        = new Dictionary<InventorySlot, SaleItem>();
 
     private void Start()
     {
@@ -18,7 +24,7 @@ public class WorldSpawner : MonoBehaviour
     {
         if (index >= spawnPoints.Count)
         {
-            Debug.LogWarning($"No spawn point assigned for slot index {index}");
+            Debug.LogWarning($"No spawn point for slot {index}");
             return;
         }
 
@@ -46,13 +52,29 @@ public class WorldSpawner : MonoBehaviour
 
         var obj = Instantiate(slot.item.worldPrefab, point.position, point.rotation);
         spawnedObjects[slot] = obj;
+
+        // Register with sale registry if this is a sale store
+        if (isSaleStore)
+        {
+            var saleItem = new SaleItem(slot.item, slot.item.price, point, slot);
+            saleItems[slot] = saleItem;
+            SaleItemRegistry.Instance.Register(saleItem);
+        }
     }
 
     private void DespawnObject(InventorySlot slot)
     {
-        if (!spawnedObjects.TryGetValue(slot, out var obj)) return;
+        if (spawnedObjects.TryGetValue(slot, out var obj))
+        {
+            Destroy(obj);
+            spawnedObjects.Remove(slot);
+        }
 
-        Destroy(obj);
-        spawnedObjects.Remove(slot);
+        // Unregister from sale registry
+        if (isSaleStore && saleItems.TryGetValue(slot, out var saleItem))
+        {
+            SaleItemRegistry.Instance.Unregister(saleItem);
+            saleItems.Remove(slot);
+        }
     }
 }
