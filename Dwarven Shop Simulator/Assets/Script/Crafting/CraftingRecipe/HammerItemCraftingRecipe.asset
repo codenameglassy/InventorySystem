@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9a5667d63b625b4ca46e9cbe4da157f, type: 3}
-  m_Name: SwordCraftRecipe
+  m_Name: HammerItemCraftingRecipe
   m_EditorClassIdentifier: 
   pattern:
   - item: {fileID: 0}

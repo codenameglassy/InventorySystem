@@ -9,12 +9,12 @@ public class InventoryTester : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             inventory.AddItem(ironOre, 1);
         }
 
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             inventory.AddItem(wood, 1);
         }
