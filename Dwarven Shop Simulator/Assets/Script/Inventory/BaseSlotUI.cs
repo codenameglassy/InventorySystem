@@ -4,7 +4,8 @@ using UnityEngine.EventSystems;
 using TMPro;
 
 public abstract class BaseSlotUI : MonoBehaviour,
-    IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
+    IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler,
+    IPointerClickHandler, IPointerDownHandler
 {
     [Header("UI Elements")]
     [SerializeField] protected Image icon;
@@ -22,7 +23,7 @@ public abstract class BaseSlotUI : MonoBehaviour,
     {
         slot = inventorySlot;
         dragSource = source;
-        slotContainer = source;     // same object implements both interfaces
+        slotContainer = source;
         slot.OnSlotChanged += Refresh;
         Refresh();
     }
@@ -56,11 +57,45 @@ public abstract class BaseSlotUI : MonoBehaviour,
         HandleDrop(slot);
     }
 
+    // Handles right-click WHILE dragging — place 1 item on this slot
+    public virtual void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Right) return;
+
+        var dragged = DragItemUI.Instance.DraggedSlot;
+        var source = DragItemUI.Instance.DragSource;
+        if (dragged == null) return;
+
+        // Same item — just add 1
+        if (slot.item == dragged.item && slot.item.stackable)
+        {
+            int space = slot.item.maxStack - slot.amount;
+            if (space <= 0) return;
+            slot.Add(1);
+            dragged.Remove(1);
+        }
+        // Empty slot — place 1
+        else if (slot.IsEmpty)
+        {
+            slot.Set(dragged.item, 1);
+            dragged.Remove(1);
+        }
+        else return; // occupied by different item — do nothing
+
+        // End drag if source is now empty
+        if (dragged.IsEmpty)
+        {
+            DragItemUI.Instance.EndDrag();
+            source?.ClearDraggedSlot();
+        }
+    }
+
     public virtual void OnPointerClick(PointerEventData eventData)
     {
-        // Right click — split in half
+        // Right click — split in half (only when NOT dragging)
         if (eventData.button == PointerEventData.InputButton.Right)
         {
+            if (DragItemUI.Instance.DraggedSlot != null) return; // dragging handled by OnPointerDown
             if (slot.IsEmpty || slot.amount <= 1) return;
 
             InventorySlot emptySlot = slotContainer.FindNextEmptySlot();
