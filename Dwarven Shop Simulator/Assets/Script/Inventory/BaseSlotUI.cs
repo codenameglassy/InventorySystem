@@ -22,9 +22,22 @@ public abstract class BaseSlotUI : MonoBehaviour,
     {
         slot = inventorySlot;
         dragSource = source;
-        slotContainer = source;     // same object implements both interfaces
+        slotContainer = source;
         slot.OnSlotChanged += Refresh;
         Refresh();
+    }
+
+    private void OnEnable()
+    {
+        // Wait for SlotRegistry to be available
+        if (SlotRegistry.Instance != null)
+            SlotRegistry.Instance.Register(this);
+    }
+
+    private void OnDisable()
+    {
+        if (SlotRegistry.Instance != null)
+            SlotRegistry.Instance.Unregister(this);
     }
 
     public void Refresh()
@@ -47,12 +60,19 @@ public abstract class BaseSlotUI : MonoBehaviour,
 
     public virtual void OnEndDrag(PointerEventData eventData)
     {
-        DragItemUI.Instance.EndDrag();
+        // If snapping to a slot, drop there
+        var snapTarget = DragItemUI.Instance.SnapTarget;
+        if (snapTarget != null && snapTarget != this)
+            HandleDrop(snapTarget.GetSlot());
+
+        DragItemUI.Instance.HideVisual();
         dragSource.ClearDraggedSlot();
     }
 
     public virtual void OnDrop(PointerEventData eventData)
     {
+        // Only handle if not already handled by snap in OnEndDrag
+        if (DragItemUI.Instance.SnapTarget != null) return;
         HandleDrop(slot);
     }
 
@@ -86,6 +106,9 @@ public abstract class BaseSlotUI : MonoBehaviour,
         }
     }
 
+    // Expose slot for snap target access
+    public InventorySlot GetSlot() => slot;
+
     protected void HandleDrop(InventorySlot target)
     {
         var dragged = DragItemUI.Instance.DraggedSlot;
@@ -112,7 +135,7 @@ public abstract class BaseSlotUI : MonoBehaviour,
             else dragged.Set(tempItem, tempAmount);
         }
 
-        DragItemUI.Instance.EndDrag();
+        DragItemUI.Instance.ClearState();
         source?.ClearDraggedSlot();
     }
 }
